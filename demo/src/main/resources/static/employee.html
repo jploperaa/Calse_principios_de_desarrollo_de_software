@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chequeo de Salud Mental</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom right, #b4e2d6, #fefbd8);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 {
+            color: #4c956c;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        button {
+            display: inline-block;
+            margin: 15px 5px;
+            padding: 12px 25px;
+            background-color: #4c956c;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease, transform 0.3s;
+        }
+        button:hover {
+            background-color: #3b7c57;
+            transform: translateY(-3px);
+        }
+        #contactarPsicologoBtn {
+            background-color: #d9534f;
+        }
+        #contactarPsicologoBtn:hover {
+            background-color: #c9302c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>¡Bienvenido al Chequeo de Salud Mental!</h1>
+        <p><strong>Nombre:</strong> <span id="nombre"></span></p>
+        <p><strong>Posición:</strong> <span id="posicion"></span></p>
+        <form id="mentalHealthForm">
+            <div class="form-group">
+                <label for="animo">¿Cómo te sientes hoy?</label><br>
+                <input type="radio" id="animo1" name="animo" value="1" required> <span>Bien</span><br>
+                <input type="radio" id="animo2" name="animo" value="2"> <span>Regular</span><br>
+                <input type="radio" id="animo3" name="animo" value="3"> <span>Mal</span><br>
+            </div>
+
+            <div class="form-group">
+                <label for="estres">¿Cómo calificarías tu nivel de estrés?</label><br>
+                <input type="radio" id="estres1" name="estres" value="1" required> <span>Bajo</span><br>
+                <input type="radio" id="estres2" name="estres" value="2"> <span>Medio</span><br>
+                <input type="radio" id="estres3" name="estres" value="3"> <span>Alto</span><br>
+            </div>
+
+            <div class="form-group">
+                <label for="sueno">¿Cómo calificarías la calidad de tu sueño?</label><br>
+                <input type="radio" id="sueno1" name="sueno" value="1" required> <span>Buena</span><br>
+                <input type="radio" id="sueno2" name="sueno" value="2"> <span>Regular</span><br>
+                <input type="radio" id="sueno3" name="sueno" value="3"> <span>Mala</span><br>
+            </div>
+
+            <div class="form-group">
+                <label for="apetito">¿Cómo está tu apetito?</label><br>
+                <input type="radio" id="apetito1" name="apetito" value="1" required> <span>Bueno</span><br>
+                <input type="radio" id="apetito2" name="apetito" value="2"> <span>Regular</span><br>
+                <input type="radio" id="apetito3" name="apetito" value="3"> <span>Malo</span><br>
+            </div>
+
+            <div class="form-group">
+                <label for="motivacion">¿Cómo calificarías tu nivel de motivación?</label><br>
+                <input type="radio" id="motivacion1" name="motivacion" value="1" required> <span>Alta</span><br>
+                <input type="radio" id="motivacion2" name="motivacion" value="2"> <span>Media</span><br>
+                <input type="radio" id="motivacion3" name="motivacion" value="3"> <span>Baja</span><br>
+            </div>
+
+            <div class="form-group">
+                <label for="interaccionSocial">¿Con qué frecuencia interactúas con otras personas?</label><br>
+                <input type="radio" id="interaccionSocial1" name="interaccionSocial" value="1" required> <span>Frecuentemente</span><br>
+                <input type="radio" id="interaccionSocial2" name="interaccionSocial" value="2"> <span>A veces</span><br>
+                <input type="radio" id="interaccionSocial3" name="interaccionSocial" value="3"> <span>Casi nunca</span><br>
+            </div>
+
+            <button type="button" onclick="evaluarSaludMental()">Enviar</button>
+        </form>
+        <button type="button" onclick="goBack()">Regresar</button>
+        <div id="resultado"></div>
+        <button type="button" id="contactarPsicologoBtn" style="display: none;" onclick="contactarPsicologo()">Contactar a un Psicólogo</button>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("nombre").textContent = sessionStorage.getItem("nombre");
+            document.getElementById("posicion").textContent = sessionStorage.getItem("posicion");
+        });
+
+        function evaluarSaludMental() {
+            const nombre = sessionStorage.getItem("nombre");
+            const posicion = sessionStorage.getItem("posicion");
+
+            const data = {
+                nombre: nombre,
+                posicion: posicion,
+                animo: parseInt(document.querySelector('input[name="animo"]:checked')?.value) || 0,
+                estres: parseInt(document.querySelector('input[name="estres"]:checked')?.value) || 0,
+                sueno: parseInt(document.querySelector('input[name="sueno"]:checked')?.value) || 0,
+                apetito: parseInt(document.querySelector('input[name="apetito"]:checked')?.value) || 0,
+                motivacion: parseInt(document.querySelector('input[name="motivacion"]:checked')?.value) || 0,
+                interaccionSocial: parseInt(document.querySelector('input[name="interaccionSocial"]:checked')?.value) || 0,
+            };
+
+            fetch("http://localhost:8080/api/mental-health-check", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                document.getElementById("resultado").innerHTML = `
+                    <h2>Resultados del Chequeo de Salud Mental:</h2>
+                    <p><strong>Nombre:</strong> ${result.nombre}</p>
+                    <p><strong>Posición:</strong> ${result.posicion}</p>
+                    <p>${result.mensaje}</p>
+                `;
+
+                // Mostrar botón de contactar a un psicólogo si es necesario
+                if (result.contactarPsicologo) {
+                    document.getElementById("contactarPsicologoBtn").style.display = 'block';
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        function contactarPsicologo() {
+            alert("Un representante se pondrá en contacto contigo para coordinar una cita con un psicólogo.");
+            // Aquí podrías añadir lógica adicional para enviar un correo electrónico o redirigir a un formulario de contacto.
+        }
+
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

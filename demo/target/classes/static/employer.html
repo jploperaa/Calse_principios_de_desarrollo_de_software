@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Respuestas de Empleados</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom right, #b4e2d6, #fefbd8);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 800px;
+            text-align: center;
+        }
+        h1, h2 {
+            color: #4c956c;
+        }
+        button {
+            display: inline-block;
+            margin: 15px 5px;
+            padding: 12px 25px;
+            background-color: #4c956c;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease, transform 0.3s;
+        }
+        button:hover {
+            background-color: #3b7c57;
+            transform: translateY(-3px);
+        }
+        hr {
+            border: 0;
+            height: 1px;
+            background: #ddd;
+            margin: 20px 0;
+        }
+        .warning {
+            color: #d9534f;
+            font-weight: bold;
+            margin-top: 10px;
+            background: rgba(217, 83, 79, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .employee-response {
+            padding: 20px;
+            border: 1px solid #dfe6e9;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            background-color: #f0f7f4;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+        .send-psiquiatra-btn {
+            display: inline-block;
+            margin: 10px auto;
+            background-color: #d9534f;
+            color: #fff;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s;
+        }
+        .send-psiquiatra-btn:hover {
+            background-color: #c9302c;
+            transform: translateY(-3px);
+        }
+        .employee-details {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Respuestas de Empleados</h1>
+        <div id="respuestas"></div>
+        <button onclick="goBack()">Regresar</button>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            verRespuestas();
+        });
+
+        function verRespuestas() {
+            fetch('http://localhost:8080/api/employee-responses')
+                .then(response => response.json())
+                .then(data => {
+                    let respuestasDiv = document.getElementById('respuestas');
+                    respuestasDiv.innerHTML = '<h2>Lista de Respuestas:</h2>';
+                    data.forEach((response, index) => {
+                        let respuestaHTML = `
+                            <div class="employee-response">
+                                <p><strong>Nombre:</strong> ${response.nombre}</p>
+                                <p><strong>Posición:</strong> ${response.posicion}</p>
+                                <button onclick="toggleDetails(${index})">Ver/Esconder Detalles</button>
+                                <div id="details-${index}" class="employee-details">
+                                    <p><strong>Mensaje:</strong> ${response.mensaje}</p>
+                        `;
+
+                        if (response.contactarPsicologo) {
+                            respuestaHTML += `
+                                <div class="warning">
+                                    <strong>Advertencia:</strong> Este empleado necesita más atención. <br>
+                                    <em>Recomendación:</em> Se sugiere enviar a un psiquiatra para una consulta adicional.
+                                </div>
+                                <button type="button" class="send-psiquiatra-btn" onclick="contactarPsiquiatra('${response.nombre}')">Enviar a un Psiquiatra</button>
+                            `;
+                        }
+
+                        respuestaHTML += `<button onclick="verHistorial('${response.nombre}')">Ver Historial</button><hr></div></div>`;
+                        respuestasDiv.innerHTML += respuestaHTML;
+                    });
+                })
+                .catch(error => console.error('Error al obtener las respuestas de los empleados:', error));
+        }
+
+        function toggleDetails(index) {
+            const detailsDiv = document.getElementById(`details-${index}`);
+            if (detailsDiv.style.display === "none" || detailsDiv.style.display === "") {
+                detailsDiv.style.display = "block";
+            } else {
+                detailsDiv.style.display = "none";
+            }
+        }
+
+        function contactarPsiquiatra(nombre) {
+            alert(`Un psiquiatra será enviado para ayudar al empleado: ${nombre}`);
+        }
+
+        function verHistorial(nombre) {
+            fetch(`http://localhost:8080/api/employee-response-history?nombre=${nombre}`)
+                .then(response => response.json())
+                .then(data => {
+                    let respuestasDiv = document.getElementById('respuestas');
+                    respuestasDiv.innerHTML = `<h2>Historial de ${nombre}:</h2>`;
+                    data.forEach(response => {
+                        respuestasDiv.innerHTML += `
+                            <div class="employee-response">
+                                <p><strong>Nombre:</strong> ${response.nombre}</p>
+                                <p><strong>Posición:</strong> ${response.posicion}</p>
+                                <p><strong>Mensaje:</strong> ${response.mensaje}</p>
+                                <hr>
+                            </div>
+                        `;
+                    });
+                })
+                .catch(error => console.error('Error al obtener el historial del empleado:', error));
+        }
+
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

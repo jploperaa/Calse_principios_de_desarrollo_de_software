@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Chequeo de Salud Mental</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom right, #b4e2d6, #fefbd8);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+        h1 {
+            color: #4c956c;
+        }
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #4c956c;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: background-color 0.3s ease, transform 0.3s;
+        }
+        button:hover {
+            background-color: #3b7c57;
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Login</h1>
+        <form id="loginForm">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+
+            <label for="posicion">Posición en la empresa:</label>
+            <input type="text" id="posicion" name="posicion" required>
+
+            <button type="button" onclick="goToEmployeePage()">Soy Empleado</button>
+            <button type="button" onclick="goToEmployerPage()">Soy Empleador</button>
+        </form>
+    </div>
+
+    <script>
+        function goToEmployeePage() {
+            const nombre = document.getElementById("nombre").value;
+            const posicion = document.getElementById("posicion").value;
+            if (nombre && posicion) {
+                sessionStorage.setItem("nombre", nombre);
+                sessionStorage.setItem("posicion", posicion);
+                window.location.href = 'employee.html';
+            } else {
+                alert("Por favor, completa todos los campos.");
+            }
+        }
+
+        function goToEmployerPage() {
+            window.location.href = 'employer.html';
+        }
+    </script>
+</body>
+</html>
